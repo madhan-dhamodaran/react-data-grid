@@ -141,6 +141,7 @@ class Grid extends React.Component {
           onHeaderDrop={this.props.onHeaderDrop}
           onScroll={this.onHeaderScroll}
           getValidFilterValues={this.props.getValidFilterValues}
+          getValidFilterValuesForTypeAhead= {this.props.getValidFilterValuesForTypeAhead}
           cellMetaData={this.props.cellMetaData}
           />
           {this.props.rowsCount >= 1 || (this.props.rowsCount === 0 && !this.props.emptyRowsView) ?

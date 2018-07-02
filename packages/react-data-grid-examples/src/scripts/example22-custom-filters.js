@@ -1,8 +1,8 @@
 const ReactDataGrid = require('react-data-grid');
 const exampleWrapper = require('../components/exampleWrapper');
 const React = require('react');
-const { Toolbar, Filters: { NumericFilter, AutoCompleteFilter, MultiSelectFilter, SingleSelectFilter }, Data: { Selectors } } = require('react-data-grid-addons');
-
+const Axios = require('axios');
+const { Toolbar, Filters: { NumericFilter, AutoCompleteFilter, MultiSelectFilter, SingleSelectFilter, TypeAheadFilter }, Data: { Selectors } } = require('react-data-grid-addons');
 class Example extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -38,6 +38,15 @@ class Example extends React.Component {
         filterRenderer: AutoCompleteFilter
       },
       {
+        key: 'typeAheadTest',
+        name: 'TypeAhead Test',
+        filterable: true,
+        sortable: true,
+        filterRenderer: TypeAheadFilter,
+        filterValue:[{value:'abcde', label:'abcdef'}],
+        width: 250
+      },
+      {
         key: 'complete',
         name: '% Complete',
         filterable: true,
@@ -55,7 +64,7 @@ class Example extends React.Component {
       }
     ];
 
-    this.state = { rows: this.createRows(1000), filters: {} };
+    this.state = { rows: this.createRows(1000), filters: {}, filterValues: [] };
   }
 
   getRandomDate = (start, end) => {
@@ -72,6 +81,7 @@ class Example extends React.Component {
         priority: ['Critical', 'High', 'Medium', 'Low'][Math.floor((Math.random() * 3) + 1)],
         issueType: ['Bug', 'Improvement', 'Epic', 'Story'][Math.floor((Math.random() * 3) + 1)],
         developer: ['James', 'Tim', 'Daniel', 'Alan'][Math.floor((Math.random() * 3) + 1)],
+        typeAheadTest: ['mralexgray/-REPONAME', 'mralexgray/...', 'mralexgray/2200087-Serial-Protocol', 'mralexgray/ace'][Math.floor(Math.random() * 3 + 1)],
         startDate: this.getRandomDate(new Date(2015, 3, 1), new Date()),
         completeDate: this.getRandomDate(new Date(), new Date(2016, 0, 1))
       });
@@ -97,7 +107,46 @@ class Example extends React.Component {
     this.setState({ filters: newFilters });
   };
 
+  getValidFilterValuesForTypeAhead = (columnId, searchText) => {
+    // var testObj = [
+    //   {
+    //     id: 1,
+    //     name: 'Ringo'
+    //   },
+    //   {
+    //     id: 2,
+    //     name: 'Paul'
+    //   },
+    //   {
+    //     id: 3,
+    //     name: 'George'
+    //   },
+    //   {
+    //     id: 4,
+    //     name: 'James'
+    //   }
+    // ];
+    // if (!searchText)
+    //   return testObj;//['Ringo', 'Paul', 'George', 'James'];
+    // return ['Rango ', 'Pango', 'Gango', 'Jango'];
+
+    //Added the below code to test how the component would behave if it needs to make an ajax call to get the options. 
+    //If it need to make an ajax call, the getOptions method in the component would be expecting a promise.
+    //below is the example code
+
+    return Axios.get('https://api.github.com/users/mralexgray/repos').then(function (resp) {
+      var filterValues = [];
+      for (var i = 0; i < resp.data.length; i++) {
+        filterValues.push(resp.data[i].full_name);
+      }
+      return filterValues;
+    });
+  }
+
   getValidFilterValues = (columnId) => {
+    //["low4", "medium4", "high4", "low5", "medium5", "high5",  "low6", "medium6", "high6", "low7", "medium7", "high7","low8", "medium8", "high8","low9", "medium9", "high9",]
+    
+    
     let values = this.state.rows.map(r => r[columnId]);
     return values.filter((item, i, a) => { return i === a.indexOf(item); });
   };
@@ -106,18 +155,45 @@ class Example extends React.Component {
     this.setState({ filters: {} });
   };
 
+  getAllColumns =(revertToDefaults) => {
+    return [
+      {key: 'one', name: 'One', isSelected: false},
+      {key: 'two', name: 'Two', isSelected: true},
+      {key: 'three', name: 'Three', isSelected: true}
+      ];
+  }
+
+  updateSelectedColumns = (value) => {
+    console.log(value);
+  };
+
+  getTotalNoOfRecords = () => {
+    return this.rowsCount();
+  }
+
+  handleGridSort = (sortColumn, sortDirection) => {
+    this.setState({ sortColumn: sortColumn, sortDirection: sortDirection });
+  };
+
   render() {
-    return  (
+    return (
+      <div>
+        
       <ReactDataGrid
+        onGridSort={this.handleGridSort}
         enableCellSelect={true}
+        enableHeaderScroll={false}
         columns={this._columns}
         rowGetter={this.rowGetter}
         rowsCount={this.rowsCount()}
         minHeight={500}
-        toolbar={<Toolbar enableFilter={true}/>}
+        toolbar={<Toolbar enableFilter={true} />}
         onAddFilter={this.handleFilterChange}
         getValidFilterValues={this.getValidFilterValues}
-        onClearFilters={this.handleOnClearFilters} />);
+        getValidFilterValuesForTypeAhead={this.getValidFilterValuesForTypeAhead}
+        onClearFilters={this.handleOnClearFilters} />
+        </div>);
+        
   }
 }
 
