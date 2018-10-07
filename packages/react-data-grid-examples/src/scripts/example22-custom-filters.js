@@ -43,7 +43,7 @@ class Example extends React.Component {
         filterable: true,
         sortable: true,
         filterRenderer: TypeAheadFilter,
-        filterValue:[{value:'abcde', label:'abcdef'}],
+        //filterValue:[{value:'abcde', label:'abcdef'}],
         width: 250
       },
       {
@@ -108,45 +108,21 @@ class Example extends React.Component {
   };
 
   getValidFilterValuesForTypeAhead = (columnId, searchText) => {
-    // var testObj = [
-    //   {
-    //     id: 1,
-    //     name: 'Ringo'
-    //   },
-    //   {
-    //     id: 2,
-    //     name: 'Paul'
-    //   },
-    //   {
-    //     id: 3,
-    //     name: 'George'
-    //   },
-    //   {
-    //     id: 4,
-    //     name: 'James'
-    //   }
-    // ];
-    // if (!searchText)
-    //   return testObj;//['Ringo', 'Paul', 'George', 'James'];
-    // return ['Rango ', 'Pango', 'Gango', 'Jango'];
-
-    //Added the below code to test how the component would behave if it needs to make an ajax call to get the options. 
-    //If it need to make an ajax call, the getOptions method in the component would be expecting a promise.
-    //below is the example code
-
     return Axios.get('https://api.github.com/users/mralexgray/repos').then(function (resp) {
-      var filterValues = [];
+    var filterValues = [];
       for (var i = 0; i < resp.data.length; i++) {
-        filterValues.push(resp.data[i].full_name);
+        var value = {
+          id:i,
+          value: resp.data[i].full_name,
+          label: resp.data[i].full_name
+        };
+        filterValues.push(value);
       }
       return filterValues;
     });
   }
 
   getValidFilterValues = (columnId) => {
-    //["low4", "medium4", "high4", "low5", "medium5", "high5",  "low6", "medium6", "high6", "low7", "medium7", "high7","low8", "medium8", "high8","low9", "medium9", "high9",]
-    
-    
     let values = this.state.rows.map(r => r[columnId]);
     return values.filter((item, i, a) => { return i === a.indexOf(item); });
   };
@@ -154,6 +130,19 @@ class Example extends React.Component {
   handleOnClearFilters = () => {
     this.setState({ filters: {} });
   };
+
+  getOptionsTemplate = option => {
+    return (
+      <div style={{ padding: "2px" }}>
+          <strong>{option.label}</strong> <br />
+          {option.value}
+      </div>
+    );
+  }
+
+  getOptionsValue = option => {
+    return option.value;
+  }
 
   getTotalNoOfRecords = () => {
     return this.rowsCount();
@@ -173,7 +162,12 @@ class Example extends React.Component {
         columns={this._columns}
         rowGetter={this.rowGetter}
         rowsCount={this.rowsCount()}
+        useTemplatingForTypeaheadFilter={true}
+        getOptionsTemplateForFilter={this.getOptionsTemplate}
+        getOptionValueForFilter={this.getOptionsValue}
+        isMultiSelection = {true}
         minHeight={500}
+        isTypeaheadFilterClearable={true}
         toolbar={<Toolbar totalRecords={this.getTotalNoOfRecords} enableFilter={true} displayTotalNoOfRecords={false}  />}
         onAddFilter={this.handleFilterChange}
         getValidFilterValues={this.getValidFilterValues}

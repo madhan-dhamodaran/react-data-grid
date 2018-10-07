@@ -124,7 +124,6 @@ class Grid extends React.Component {
   render(): ?ReactElement {
     let headerRows = this.props.headerRows || [{ref: (node) => this.row = node}];
     let EmptyRowsView = this.props.emptyRowsView;
-
     return (
       <div style={this.getStyle()} className="react-grid-Grid">
         <Header
@@ -139,10 +138,15 @@ class Grid extends React.Component {
           draggableHeaderCell={this.props.draggableHeaderCell}
           onSort={this.props.onSort}
           onHeaderDrop={this.props.onHeaderDrop}
-          onScroll={this.onHeaderScroll}
+          onScroll={_.isUndefined(this.props.enableHeaderScroll) ? this.onHeaderScroll : (this.props.enableHeaderScroll ? this.onHeaderScroll : null)}
           getValidFilterValues={this.props.getValidFilterValues}
           getValidFilterValuesForTypeAhead= {this.props.getValidFilterValuesForTypeAhead}
           cellMetaData={this.props.cellMetaData}
+          useTemplatingForTypeaheadFilter= {this.props.useTemplatingForTypeaheadFilter}
+          isTypeaheadFilterClearable = {this.props.isTypeaheadFilterClearable}
+          getOptionsTemplateForFilter = {this.props.getOptionsTemplateForFilter}
+          getOptionValueForFilter= {this.props.getOptionValueForFilter}
+          isMultiSelection = {this.props.isMultiSelection}
           />
           {this.props.rowsCount >= 1 || (this.props.rowsCount === 0 && !this.props.emptyRowsView) ?
             <div

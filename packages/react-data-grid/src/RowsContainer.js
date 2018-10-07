@@ -37,7 +37,8 @@ class RowsContainer extends React.Component {
     // Initialise the context menu if it is available
     return (
       <div>
-        <ContextMenuTrigger id={newProps.id}>
+        <ContextMenuTrigger id={newProps.id}
+         holdToDisplay={0}>
           <SimpleRowsContainer {...this.props} />
         </ContextMenuTrigger>
         {contextMenu}
