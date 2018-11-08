@@ -138,7 +138,7 @@ class Grid extends React.Component {
           draggableHeaderCell={this.props.draggableHeaderCell}
           onSort={this.props.onSort}
           onHeaderDrop={this.props.onHeaderDrop}
-          onScroll={_.isUndefined(this.props.enableHeaderScroll) ? this.onHeaderScroll : (this.props.enableHeaderScroll ? this.onHeaderScroll : null)}
+          onScroll={typeof(this.props.enableHeaderScroll) === 'Undefined' ? this.onHeaderScroll : (this.props.enableHeaderScroll ? this.onHeaderScroll : null)}
           getValidFilterValues={this.props.getValidFilterValues}
           getValidFilterValuesForTypeAhead= {this.props.getValidFilterValuesForTypeAhead}
           cellMetaData={this.props.cellMetaData}

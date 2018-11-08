@@ -30,6 +30,7 @@ class TypeAheadFilter extends React.Component {
         this.filterValues = this.filterValues.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.columnValueContainsSearchTerms = this.columnValueContainsSearchTerms.bind(this);
+        this.getOptionsTemplateForFilter = this.getOptionsTemplateForFilter.bind(this);
         let defaultFilters = props.column ? props.column.filterValue : []
         this.state = { options: [], rawValue: '', placeholder: 'Begin typing and select from list', filters: defaultFilters };
     }
@@ -84,6 +85,10 @@ class TypeAheadFilter extends React.Component {
         return inputValue;
       };
 
+      getOptionsTemplateForFilter(option){
+        return this.props.getOptionsTemplateForFilter(option, this.props.column); 
+      }
+
     render() {
         return this.props.useTemplatingForTypeaheadFilter ? 
         <AsyncSelect
@@ -97,7 +102,7 @@ class TypeAheadFilter extends React.Component {
           defaultOptions
           cacheOptions
           onInputChange={this.handleInputChange}
-          getOptionLabel={this.props.getOptionsTemplateForFilter}
+          getOptionLabel={this.getOptionsTemplateForFilter}
           getOptionValue={this.props.getOptionValueForFilter}
           isClearable={this.props.isTypeaheadFilterClearable}
           onChange={this.handleChange}

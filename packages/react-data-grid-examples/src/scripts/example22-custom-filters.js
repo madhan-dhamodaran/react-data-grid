@@ -130,10 +130,10 @@ class Example extends React.Component {
   handleOnClearFilters = () => {
     this.setState({ filters: {} });
   };
-
-  getOptionsTemplate = option => {
+  
+  getOptionsTemplate = (option,column) => {
     return (
-      <div style={{ padding: "2px" }}>
+      <div style={{ padding: "2px" }}>    
           <strong>{option.label}</strong> <br />
           {option.value}
       </div>
