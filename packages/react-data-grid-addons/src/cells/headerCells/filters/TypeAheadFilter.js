@@ -4,7 +4,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AsyncSelect from 'react-select/lib/Async';
 import { utils, shapes } from 'react-data-grid';
-const { isEmptyArray } = utils;
+import {isEmptyArray} from 'common/utils';
 const { ExcelColumn } = shapes; 
 const MultiValueLabel = props => {
     return (
